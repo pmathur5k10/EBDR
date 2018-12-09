@@ -19,6 +19,9 @@ import json
 import re
 from string import punctuation
 from gensim.parsing.preprocessing import STOPWORDS
+import time
+import threading
+import pandas as pd
 
 app = Flask(__name__)
 api_1 = Api(app)
@@ -116,9 +119,20 @@ check=[]
 clf = joblib.load('clf.joblib')
 clf2 = joblib.load('svc.joblib')
 
+T = time.time()
+def refresh():
+    global T
+    while(1):
+        C = time.time()
+        if((C-T)>900):
+            os.system("python3 twitter_create_dataset.py")
+            T=time.time()
+Th = threading.Thread(target=refresh)
+Th.start()
 
 class User(Resource):
     def get(self):
+        """
         toret={}
         saved=0
         f = open("query_list.txt","r")
@@ -206,7 +220,7 @@ class User(Resource):
 
 
                         # f.write(jsonpickle.encode(tweet._json, unpicklable=False) +
-                        #         '\n')
+                        #         
                         # print(tweet.keys())
                         
                         # tweet_dict.append(tweet)
@@ -231,7 +245,15 @@ class User(Resource):
             writer = csv.writer(f2, delimiter=',')
             for row in tweet_list:
                 writer.writerow(row)
-        return toret,200
+        """
+        with open('RBC.csv',"r") as f:
+            reader = csv.reader(f,delimiter = ",")
+            data = list(reader)
+            row_count = len(data)
+
+        df = pd.read_csv('RBC.csv', skiprows = row_count - 10)
+        print(df)
+        return df.to_json(),200
 
 
 api_1.add_resource(User, "/tweet/")
