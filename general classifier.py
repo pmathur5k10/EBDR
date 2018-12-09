@@ -21,13 +21,13 @@ from sklearn.linear_model import SGDClassifier
 from sklearn import metrics
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import FeatureUnion
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC,SVC
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.base import TransformerMixin, BaseEstimator
 
-
+import joblib
 
 
 FLAGS = re.MULTILINE | re.DOTALL
@@ -144,7 +144,7 @@ def test_model(model,test_features,labels):
     print("{}\n".format(classification_report(labels,prediction)))
     
 
-fileName='C:/ml/blood_donation/EBRT/BDC_dataset.txt'
+fileName='BDC.txt'
 with open(fileName,'r') as f:
 	dataset=json.load(f)
 	
@@ -159,11 +159,11 @@ for i in range(len(dataset)):
 	temp=preprocess(temp)
 	dataset_text.append(temp)
 	temp2=[]
-	if dataset[i]['hospital']=='NULL' or dataset[i]['hospital']=='0':
+	if 'hospital' in dataset[i] and (dataset[i]['hospital']=='NULL' or dataset[i]['hospital']=='0'):
 		temp2.append(0)
 	else:
 		temp2.append(1)
-	if dataset[i]['blood group']=='NULL' or dataset[i]['blood group']=='0':
+	if 'blood' in dataset[i] and (dataset[i]['blood group']=='NULL' or dataset[i]['blood group']=='0'):
 		temp2.append(0)
 	else:
 		temp2.append(1)
@@ -174,25 +174,25 @@ for i in range(len(dataset)):
 			temp2.append(1)
 				
 	except:
-		if dataset[i]['Contact Number']=='NULL' or dataset[i]['Contact Number']=='0':
+		if 'Contact Number' in dataset[i] and (dataset[i]['Contact Number']=='NULL' or dataset[i]['Contact Number']=='0'):
 			temp2.append(0)
 		else:
 			temp2.append(1)
 
 	
-	if dataset[i]['blood quantity']=='NULL' or dataset[i]['blood quantity']=='0':
+	if 'blood quantity' in dataset[i] and (dataset[i]['blood quantity']=='NULL' or dataset[i]['blood quantity']=='0'):
 		temp2.append(0)
 	else:
 		temp2.append(1)
-	if dataset[i]['patient disease']=='NULL' or dataset[i]['patient disease']=='0':
+	if 'patient disease' in dataset[i] and (dataset[i]['patient disease']=='NULL' or dataset[i]['patient disease']=='0'):
 		temp2.append(0)
 	else:
 		temp2.append(1)
-	if dataset[i]['contact name']=='NULL' or dataset[i]['contact name']=='0':
+	if 'contact name' in dataset[i] and (dataset[i]['contact name']=='NULL' or dataset[i]['contact name']=='0'):
 		temp2.append(0)
 	else:
 		temp2.append(1)
-	if dataset[i]['place of donation']=='NULL' or dataset[i]['place of donation']=='0':
+	if 'place of donation' in dataset[i] and (dataset[i]['place of donation']=='NULL' or dataset[i]['place of donation']=='0'):
 		temp2.append(0)
 	else:
 		temp2.append(1)
@@ -252,7 +252,7 @@ for i in range(len(dataset)):
 
 	dataset_textual_metadata.append(temp4)
 	
-	if dataset[i]['blood required']=='NULL' or dataset[i]['blood required']=='0':
+	if 'blood required' in dataset[i] and (dataset[i]['blood required']=='NULL' or dataset[i]['blood required']=='0'):
 		dataset_label.append(0)
 	else:
 		dataset_label.append(1)
@@ -300,17 +300,18 @@ text_clf = Pipeline([('vect', CountVectorizer()),
 ])
 
 
-
+print(X_contextual_feature_train[0],Y_label_train[0])
 
 text_clf.fit(X_text_train, Y_label_train)
 predicted = text_clf.predict(X_text_test)
 print(np.mean(predicted == Y_label_test))
 
-clf_SVC= LinearSVC()
+joblib.dump(text_clf,"clf.joblib")
+
+clf_SVC= SVC(gamma='auto')
 clf_SVC.fit(X_contextual_feature_train,Y_label_train)
 predicted=clf_SVC.predict(X_contextual_feature_test)
 print(np.mean(predicted == Y_label_test))
-
 
 clf_SVC.fit(X_user_metadata_train,Y_label_train)
 predicted=clf_SVC.predict(X_user_metadata_test)
@@ -384,5 +385,4 @@ for i in range(len(X_contextual_feature_test)):
 clf_SVC.fit(X_user_contextual_textual_train,Y_label_train)
 predicted=clf_SVC.predict(X_user_contextual_textual_test)
 print(np.mean(predicted == Y_label_test))
-
 
