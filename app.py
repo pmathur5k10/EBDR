@@ -23,8 +23,8 @@ import time
 import threading
 import pandas as pd
 
-app = Flask(__name__)
-api_1 = Api(app)
+#app = Flask(__name__)
+#api_1 = Api(app)
 
 
 def tokenize_glove_func(text):
@@ -122,6 +122,8 @@ clf2 = joblib.load('svc.joblib')
 T = time.time()
 def refresh():
     global T
+    os.system("python3 twitter_create_dataset.py")
+    T=time.time()
     while(1):
         C = time.time()
         if((C-T)>900):
@@ -129,7 +131,7 @@ def refresh():
             T=time.time()
 Th = threading.Thread(target=refresh)
 Th.start()
-
+'''
 class User(Resource):
     def get(self):
         """
@@ -259,7 +261,7 @@ class User(Resource):
 api_1.add_resource(User, "/tweet/")
 
 app.run(host='127.0.0.1')
-
+'''
 # print("Downloading max {0} tweets".format(maxTweets))
             
         
