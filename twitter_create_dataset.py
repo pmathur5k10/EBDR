@@ -64,11 +64,11 @@ def preprocess(text):
     text=tweet_clean(text)
     return text
 
-consumer_key='insert key'
-consumer_secret='insert secret key'
+consumer_key=''
+consumer_secret=''
 
-access_token='insert token'
-access_token_secret='insert secret token'
+access_token=''
+access_token_secret=''
 # Consumer and access credentials from twitter developers for access grant
 
 auth=tweepy.OAuthHandler(consumer_key,consumer_secret)
@@ -116,14 +116,14 @@ while(1):
         try:
             if (max_id <= 0):
                 if (not sinceId):
-                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry)
+                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='en',locations=[68,8,98,38])
                 else:
-                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, since_id=sinceId)
+                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, since_id=sinceId,lang='en',locations=[68,8,98,38])
             else:
                 if (not sinceId):
-                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, max_id=str(max_id - 1))
+                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, max_id=str(max_id - 1),lang='en',locations=[68,8,98,38])
                 else:
-                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, max_id=str(max_id - 1), since_id=sinceId)
+                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, max_id=str(max_id - 1), since_id=sinceId,lang='en',locations=[68,8,98,38])
             if not new_tweets:
                 print("No more tweets found")
                 break

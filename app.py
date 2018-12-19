@@ -80,11 +80,11 @@ def preprocess(text):
     text=tweet_clean(text)
     return text
 
-consumer_key='BGgRVICAeeB9qlVNnq1o5SQmH'
-consumer_secret='vOBKrQEzZYwpaAOzWRsMGKhYmc56jZtLrXH6Wh03nOtGCVM4KA'
+consumer_key=''
+consumer_secret=''
 
-access_token='1039541660382707713-k4GaaNvvXRjV7iPyifv3TqQ90cjCzm'
-access_token_secret='lgq7TWGAGr2XkWk16cGZ5Nv2fV83CC2OsBm7Yq9XL9kR9'
+access_token=''
+access_token_secret=''
 # Consumer and access credentials from twitter developers for access grant
 
 auth=tweepy.OAuthHandler(consumer_key,consumer_secret)
