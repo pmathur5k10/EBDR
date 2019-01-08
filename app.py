@@ -126,7 +126,7 @@ def refresh():
     T=time.time()
     while(1):
         C = time.time()
-        if((C-T)>3600):
+        if((C-T)>(24*3600)):
             os.system("python3 twitter_create_dataset.py")
             T=time.time()
 Th = threading.Thread(target=refresh)

@@ -10,6 +10,7 @@ from gensim.parsing.preprocessing import STOPWORDS
 from preprocess_tweets import tweet_clean
 import joblib
 import copy
+import enchant
 
 def tokenize_glove_func(text):
   
@@ -104,6 +105,7 @@ clf = joblib.load('clf.joblib')
 clf2 = joblib.load('svc.joblib')
 saved=0
 Authorities = "@LionsClubsIndia @IndianRedCross @savelifeind @RotaryIndia "
+d=enchant.Dict("en_US")
 # print("Downloading max {0} tweets".format(maxTweets))
 while(1):
     searchQuery = f.readline()
@@ -145,11 +147,16 @@ while(1):
                 temp1=copy.deepcopy(temp[1])
                 temp1=temp1+Authorities
                 temp=new_tweets["statuses"][tweet]["text"]
+                Eng=0
+                for word in temp:
+                    if(d.check(word)):
+                        Eng+=1
+                if(Eng<(0.75)*len(temp)):
+                    continue
                 temp=preprocess(temp)
                 pred=clf.predict([temp])
-
+                '''
                 temp2=[]
-
                 if temp.find('hospital')==-1:
                     temp2.append(0)
                 else:
@@ -188,10 +195,11 @@ while(1):
                 else:
                     temp2.append(1)
                 pred2 = clf2.predict([temp2])
+                '''
                 if(pred[0]==1):# or pred2[0]==1):
                     api.update_status(temp1)
-                    print(pred,temp)
-                    print(pred2,temp)
+                    print(pred,temp1)
+                    #print(pred2,temp)
                     tweet_dict['tweets'].append({
 
 
